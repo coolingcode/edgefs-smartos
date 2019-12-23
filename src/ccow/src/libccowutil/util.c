@@ -23,8 +23,15 @@
  */
 #include <sys/ioctl.h>
 #include <net/if.h>
+
+#if defined(__linux__)
 #include <linux/ethtool.h>
 #include <linux/sockios.h>
+#elif defined(__sun)
+#include <sys/types.h>
+#include <net/if.h>
+#endif
+
 #include <sys/timerfd.h>
 #include <string.h>
 #include <errno.h>
@@ -233,7 +240,8 @@ ethtool_info(const char *ifname, uint32_t *speed_mbits, uint8_t *duplex,
 {
 	int sock;
 	struct ifreq ifr;
-	struct ethtool_cmd edata_cmd;
+// FIXME: Stubbed out because it's Linux specific. Need to port.
+//	struct ethtool_cmd edata_cmd;
 	int err;
 
 	sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
@@ -242,47 +250,47 @@ ethtool_info(const char *ifname, uint32_t *speed_mbits, uint8_t *duplex,
 
 	memset(&ifr, 0, sizeof(ifr));
 	strncpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
-	ifr.ifr_data = (caddr_t)&edata_cmd;
+	// ifr.ifr_data = (caddr_t)&edata_cmd;
 
-	edata_cmd.cmd = ETHTOOL_GSET;
+	// edata_cmd.cmd = ETHTOOL_GSET;
 
-	err = ioctl(sock, SIOCETHTOOL, &ifr);
-	if (err < 0) {
+	// err = ioctl(sock, SIOCETHTOOL, &ifr);
+	// if (err < 0) {
 		/* assume paravirt environments */
 		*speed_mbits = 10000;
 		*duplex = 1;
-	} else {
-		*speed_mbits = (uint32_t)ethtool_cmd_speed(&edata_cmd);
-		*duplex = (uint8_t)edata_cmd.duplex;
-	}
+	// } else {
+	// 	*speed_mbits = (uint32_t)ethtool_cmd_speed(&edata_cmd);
+	// 	*duplex = (uint8_t)edata_cmd.duplex;
+	// }
 
-	struct ethtool_value edata_value;
+	// struct ethtool_value edata_value;
 
-	edata_value.data = 0;
-	edata_value.cmd = ETHTOOL_GLINK;
-	ifr.ifr_data = (caddr_t)&edata_value;
-	err = ioctl(sock, SIOCETHTOOL, &ifr);
-	if (err < 0) {
-		if (errno == EOPNOTSUPP) {
-			/* This is a workaound for a Linux dummy interface */
-			edata_value.data = 1;
-		} else {
-			close(sock);
-			log_error(lg, "Cannot get %s link status (%d): %s\n", ifname,
-				errno, strerror(errno));
-			return -errno;
-		}
-	}
-	*link_status = (uint8_t)edata_value.data;
+	// edata_value.data = 0;
+	// edata_value.cmd = ETHTOOL_GLINK;
+	// ifr.ifr_data = (caddr_t)&edata_value;
+	// err = ioctl(sock, SIOCETHTOOL, &ifr);
+	// if (err < 0) {
+	// 	if (errno == EOPNOTSUPP) {
+	// 		/* This is a workaound for a Linux dummy interface */
+	// 		edata_value.data = 1;
+	// 	} else {
+	// 		close(sock);
+	// 		log_error(lg, "Cannot get %s link status (%d): %s\n", ifname,
+	// 			errno, strerror(errno));
+	// 		return -errno;
+	// 	}
+	// }
+	// *link_status = (uint8_t)edata_value.data;
 
-	err = ioctl(sock, SIOCGIFMTU, &ifr);
-	if (err < 0) {
-		close(sock);
-		log_error(lg, "Cannot get %s mtu (%d): %s\n", ifname,
-		    errno, strerror(errno));
-		return -errno;
-	}
-	*mtu = ifr.ifr_mtu;
+	// err = ioctl(sock, SIOCGIFMTU, &ifr);
+	// if (err < 0) {
+	// 	close(sock);
+	// 	log_error(lg, "Cannot get %s mtu (%d): %s\n", ifname,
+	// 	    errno, strerror(errno));
+	// 	return -errno;
+	// }
+	// *mtu = ifr.ifr_mtu;
 
 	close(sock);
 	return 0;

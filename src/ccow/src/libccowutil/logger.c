@@ -34,8 +34,11 @@
 #include "ccowutil.h"
 #include "logger.h"
 #include "ccowutil.h"
+
+#if defined(__linux__)
 #include <backtrace.h>
 #include <backtrace-supported.h>
+#endif
 
 
 #define QUOTE(name) #name
@@ -177,7 +180,8 @@ Logger_init(LOGGER *lgp, const char *logname)
 			int error = errno;
 
 			openlog ("ccow",
-			    (LOG_PERROR | LOG_CONS | LOG_PID), LOG_USER);
+			// LOG_PERROR not supported on Illumos
+			    ( LOG_CONS | LOG_PID), LOG_USER);
 			syslog (LOG_ERR, "Failed to open log file, error %d (%s)",
 			    error, strerror(error));
 			closelog();
@@ -376,7 +380,8 @@ log_check_and_rotate(Logger l)
 				int error = errno;
 
 				openlog ("ccow",
-				    (LOG_PERROR | LOG_CONS | LOG_PID), LOG_USER);
+				// LOG_PERROR is not supported on Illumos.
+				    (LOG_CONS | LOG_PID), LOG_USER);
 				syslog (LOG_ERR, "logrotate: Failed to open log file, error %d (%s)",
 				    error, strerror(error));
 				closelog();

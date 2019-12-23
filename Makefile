@@ -13,60 +13,15 @@ VERSION := 1.0.0
 DESTDIR ?= $(NEDGE_HOME)
 
 define verify_minimal_env
-@test x$(NEDGE_HOME) != x || (echo Error: NEDGE_HOME is not set; false)
-@test $(distributorid) = ubuntu -o $(distributorid) = centos -o $(distributorid) = rhel || \
-	(echo Error: unsupported distribution "$(distributorid)"; false)
+	# TODO: Body removed. Need to make it work with SmartOS.
 endef
 
 define install_dev_env
-@if test $(distributorid) = ubuntu; then \
-	add-apt-repository -y ppa:git-core/ppa; \
-	apt-get update; \
-	apt-get -y install git curl; \
-fi
-@if test $(distributorid) = centos -o $(distributorid) = rhel; then \
-	yum -y install git cscope yasm wget; \
-fi
-@if [ ! -f /usr/bin/go ]; then \
-	echo; \
-	echo "/usr/bin/go not found: installing local copy of golang"; \
-	echo; \
-	cd /usr/local; \
-	curl https://dl.google.com/go/go1.12.7.linux-amd64.tar.gz --output go1.12.7.linux-amd64.tar.gz --silent ; \
-	tar -xf go1.12.7.linux-amd64.tar.gz; \
-	rm -f go1.12.7.linux-amd64.tar.gz; \
-	cd -; \
-	ln -s /usr/local/go/bin/go /usr/bin/go; \
-fi
+	# TODO: Body removed. Need to make it work with SmartOS.
 endef
 
 define install_lib_deps
-@if test $(distributorid) = ubuntu; then \
-	apt-get -y install build-essential libtool automake cmake uuid-dev \
-		cgroup-bin systemtap-sdt-dev libcurl4-openssl-dev libkrb5-dev \
-		libblkid-dev libnss3-dev groff libssl-dev libcgroup-dev \
-		bison flex curl unzip udev zlib1g-dev libtirpc-dev rpcbind \
-		libnl-route-3-dev pkg-config; \
-fi
-@if test $(distributorid) = centos -o $(distributorid) = rhel; then \
-	yum -y --skip-broken install openssl-devel libtool automake cmake \
-		systemtap-sdt-devel curl-devel libcgroup-devel libuuid-devel \
-		libcgroup-tools libasan devtoolset-4-libasan-devel \
-		libblkid-devel nss-devel groff-base openssl-devel \
-		libcgroup-devel krb5-devel bison flex curl unzip udev; \
-	yum -y install --enablerepo=rhel-7-server-optional-rpms; \
-	yum -y groupinstall "Development Tools"; \
-	yum -y install centos-release-scl; \
-	yum -y install devtoolset-4-gcc*; \
-	if test -f /usr/bin/gcc; then \
-		mv /usr/bin/g++ /usr/bin/g++-4; \
-		mv /usr/bin/gcc /usr/bin/gcc-4; \
-		mv /usr/bin/c++ /usr/bin/c++-4; \
-		ln -s /opt/rh/devtoolset-4/root/usr/bin/g++ /usr/bin/g++; \
-		ln -s /opt/rh/devtoolset-4/root/usr/bin/c++ /usr/bin/c++; \
-		ln -s /opt/rh/devtoolset-4/root/usr/bin/gcc /usr/bin/gcc; \
-	fi \
-fi
+	# TODO: Body removed. Need to make it work with SmartOS.
 endef
 
 

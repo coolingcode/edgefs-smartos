@@ -42,7 +42,7 @@ endif
 endif
 
 .configure:
-	cd ../.. && flock -e .gitmodules git submodule update --depth 1 --recursive --init deps/kvssd/$(NAME)
+	cd ../.. &&  git submodule update --depth 1 --recursive --init deps/kvssd/$(NAME)
 	$(KVS_PATH)/tools/install_deps.sh
 	mkdir -p $(KVS_PATH)/build 
 	touch $@

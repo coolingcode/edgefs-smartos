@@ -1,3 +1,39 @@
+# Illumos / SmartOS port of EdgeFS
+
+WARNING: Work in progress! Does not work yet!
+
+While this port will probably also work on Solaris (most of it anyway ;-) it is untested.
+
+This build was done in a `base-64` 19.3.0 (`b81bcc1e-f1c8-11e9-8876-03a841507d8c`) zone which is based on pkgsrc 2019Q3.
+
+Install prequisites:
+
+```
+# pkgin install gmake gcc7 git-base cscope yasm go libtool automake cmake bison flex curl unzip check pkgconf nss lz4 lzo doxygen
+```
+
+Checkout source:
+
+```
+# git clone --recurse-submodules https://github.com/siepkes/edgefs-smartos.git
+# cd edgefs-smartos
+# git checkout illumos-support
+```
+
+I needed to run the following command as a workaround for autoconf problems with pkgconf I ran into with `libqb` (See: https://stackoverflow.com/questions/6758442/pkg-check-modules-breaking-in-solaris ):
+```
+# aclocal
+```
+
+Building:
+
+```
+# export NEDGE_HOME=/root/edgefs-dist
+# export CFLAGS="-lsocket -lxnet"
+# mkdir -p $NEDGE_HOME
+# make deps
+```
+
 # EdgeFS - decentralized data fabric layer for Edge/IoT, Edge/Fog and Cloud Computing
 
 EdgeFS is high-performance, low-latency, small memory footprint, decentralized data fabric system released under Apache License v2.0 developed in C/Go.

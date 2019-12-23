@@ -194,7 +194,9 @@ ccowtp_worker_work(void* arg) {
 	struct ccowpt_worker_priv* priv = arg;
 	struct ccowtp_je* je;
 	int err = 0;
+#if defined(__linux__)
 	struct sched_param params = {.__sched_priority = 0 };
+#endif
 	struct timespec ts;
 	int term = 0;
 
@@ -226,8 +228,10 @@ ccowtp_worker_work(void* arg) {
 		struct ccowtp* tp = je->tp;
 		int prio = je->prio;
 		if (je->work != ccowtp_cancel_cb) {
+#if defined(__linux__)
 			params.sched_priority = je->cfg->prio;
 			pthread_setschedparam(pthread_self(), je->cfg->sched, &params);
+#endif
 			/* Invoke the worker */
 			je->work(je->arg);
 		}

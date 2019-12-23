@@ -29,7 +29,11 @@
 #include <string.h>
 #include <inttypes.h>
 #include <sys/time.h>
+#if defined(__sun)
+#include <sys/syscall.h>
+#else
 #include <syscall.h>
+#endif
 #include <assert.h>
 #include <uv.h>
 #include <math.h>
@@ -110,7 +114,15 @@ void load_crypto_lib();
 #endif
 
 static inline unsigned long ccow_gettid() {
-	return syscall(SYS_gettid);
+	unsigned long tid = 0;
+#if defined(__linux__)
+	tid = (unsigned long)syscall(SYS_gettid);
+#elif defined(__sun)
+	tid = (unsigned long)pthread_self();
+#else
+#error "Unsupported platform: Don't know how to retrieve thread id."
+#endif
+	return tid;
 }
 
 
